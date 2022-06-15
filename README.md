@@ -8,3 +8,13 @@ GoBio: Link in bio tool built on GoLang, inspired by Linktr.ee
 
 ## Architecture
 Controller -> Service -> Repository
+
+### Run in Docker
+
+First, install [Docker](https://docs.docker.com/get-docker/) and
+[Docker Compose](https://docs.docker.com/compose/install/).
+
+Then run the following command.
+```bash
+./.maintain/docker/start-docker-compose.sh
+```
