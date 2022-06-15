@@ -1,0 +1,43 @@
+version: "3.9" # optional since v1.27.0
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=gobio
+      - PGDATA=/data/postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/data/postgres
+    networks:
+      gobio:
+        ipv4_address: 172.27.1.1
+        aliases:
+          - postgres
+  gobio:
+    container_name: gobio
+    image: meziaris/gobio
+    env_file:
+      - ../../.env
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+    networks:
+      gobio:
+        ipv4_address: 172.27.1.2
+        aliases:
+          - gobio
+
+networks:
+  gobio:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.27.0.0/16
+
+volumes:
+  postgres:
