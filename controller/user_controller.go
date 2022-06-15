@@ -20,7 +20,9 @@ func NewUserController(service *service.UserService) UserController {
 }
 
 func (controller *UserController) Router(e *echo.Echo) {
-	e.POST("/v1/user", controller.Create)
+	r := e.Group("/v1")
+	r.POST("/user", controller.Create)
+	r.POST("/login", controller.Login)
 }
 
 func (controller *UserController) Create(c echo.Context) error {
@@ -40,4 +42,23 @@ func (controller *UserController) Create(c echo.Context) error {
 
 	code := http.StatusOK
 	return c.JSON(code, helper.APIResponse("Your account has been created", code, "OK", response))
+}
+
+func (controller *UserController) Login(c echo.Context) error {
+	var request = model.LoginUserRequest{}
+
+	err := c.Bind(&request)
+	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+	}
+
+	response, err := controller.UserService.Login(request)
+	if err != nil {
+		code := http.StatusBadRequest
+		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+	}
+
+	code := http.StatusOK
+	return c.JSON(code, helper.APIResponse("login success", code, "OK", response))
 }

@@ -24,3 +24,13 @@ func (repository *userRepositoryImpl) Insert(user entity.User) error {
 
 	return nil
 }
+
+func (repository *userRepositoryImpl) FindByEmail(email string) (entity.User, error) {
+	var user entity.User
+	err := repository.DB.Where("email = ?", email).Find(&user).Error
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}

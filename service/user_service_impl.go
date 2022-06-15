@@ -25,7 +25,7 @@ func (service *userServiceImpl) Register(request model.RegisterUserRequest) (res
 	user.Username = request.Username
 	user.Email = request.Email
 	if request.Password == "" {
-		return response, errors.New("password can't empty")
+		return response, errors.New("Password can't empty")
 	}
 	password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.MinCost)
 	if err != nil {
@@ -46,4 +46,34 @@ func (service *userServiceImpl) Register(request model.RegisterUserRequest) (res
 	}
 
 	return userResponse, nil
+}
+
+func (service *userServiceImpl) Login(request model.LoginUserRequest) (response model.LoginUserResponse, err error) {
+	email := request.Email
+	password := request.Password
+
+	user, err := service.UserRepository.FindByEmail(email)
+	if err != nil {
+		return response, err
+	}
+
+	if user.Id == 0 {
+		return response, errors.New("user doesn't exist")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return response, errors.New("incorrect password")
+	}
+
+	userResponse := model.LoginUserResponse{
+		ID:       user.Id,
+		Name:     user.Name,
+		Username: user.Username,
+		Email:    user.Email,
+		Token:    "tokentoken",
+	}
+
+	return userResponse, nil
+
 }
