@@ -11,11 +11,13 @@ import (
 
 type UserController struct {
 	UserService service.UserService
+	JWTService  service.JWTService
 }
 
-func NewUserController(service *service.UserService) UserController {
+func NewUserController(userService *service.UserService, jwtService *service.JWTService) UserController {
 	return UserController{
-		UserService: *service,
+		UserService: *userService,
+		JWTService:  *jwtService,
 	}
 }
 
@@ -53,11 +55,19 @@ func (controller *UserController) Login(c echo.Context) error {
 		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
 
-	response, err := controller.UserService.Login(request)
+	user, err := controller.UserService.Login(request, "token")
 	if err != nil {
 		code := http.StatusBadRequest
 		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
+
+	token, err := controller.JWTService.GenerateToken(user.ID)
+	if err != nil {
+		code := http.StatusBadRequest
+		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+	}
+
+	response := helper.LoginResponse(user, token)
 
 	code := http.StatusOK
 	return c.JSON(code, helper.APIResponse("login success", code, "OK", response))

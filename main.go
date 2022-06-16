@@ -27,9 +27,10 @@ func main() {
 
 	// Setup Service
 	userService := service.NewUserService(&userRepository)
+	jwtService := service.NewJWTToken()
 
 	// Setup Controller
-	userController := controller.NewUserController(&userService)
+	userController := controller.NewUserController(&userService, &jwtService)
 
 	// Setup Echo
 	e := echo.New()
