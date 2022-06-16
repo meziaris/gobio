@@ -3,6 +3,7 @@ module gobio
 go 1.18
 
 require (
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/labstack/echo/v4 v4.7.2
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	gorm.io/driver/postgres v1.3.7
@@ -11,7 +12,6 @@ require (
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.12.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
