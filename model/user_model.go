@@ -23,12 +23,5 @@ type LoginUserResponse struct {
 	Name     string `json:"name" binding:"required"`
 	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
-}
-
-type LoginUserFormatterResponse struct {
-	ID       int    `json:"id" binding:"required"`
-	Name     string `json:"name" binding:"required"`
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
 	Token    string `json:"token" binding:"required"`
 }

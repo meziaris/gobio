@@ -66,9 +66,8 @@ func (controller *UserController) Login(c echo.Context) error {
 		code := http.StatusBadRequest
 		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
-
-	response := helper.LoginResponse(user, token)
+	user.Token = token
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("login success", code, "OK", response))
+	return c.JSON(code, helper.APIResponse("login success", code, "OK", user))
 }

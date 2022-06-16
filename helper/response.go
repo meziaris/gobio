@@ -14,14 +14,3 @@ func APIResponse(message string, code int, status string, data interface{}) mode
 	}
 	return response
 }
-
-func LoginResponse(m model.LoginUserResponse, token string) model.LoginUserFormatterResponse {
-	response := model.LoginUserFormatterResponse{
-		ID:       m.ID,
-		Name:     m.Name,
-		Username: m.Username,
-		Email:    m.Email,
-		Token:    token,
-	}
-	return response
-}
