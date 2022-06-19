@@ -1,36 +1,31 @@
 package main
 
 import (
+	"gobio/config"
 	"gobio/controller"
-	"gobio/entity"
 	"gobio/repository"
 	"gobio/service"
-	"log"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 func main() {
-	dsn := "host=localhost user=postgres password=postgres dbname=gobio port=5432 sslmode=disable TimeZone=Asia/Jakarta"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	db.AutoMigrate(&entity.User{})
+	configuration := config.New()
+	db := config.NewDatabase(configuration)
 
 	// Setup Repository
 	userRepository := repository.NewUserRepository(db)
+	linkRepository := repository.NewLinkRepository(db)
 
 	// Setup Service
 	userService := service.NewUserService(&userRepository)
 	jwtService := service.NewJWTToken()
+	linkService := service.NewLinkService(&linkRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(&userService, &jwtService)
+	linkController := controller.NewLinkController(&linkService)
 
 	// Setup Echo
 	e := echo.New()
@@ -40,5 +35,6 @@ func main() {
 
 	// Setup Router
 	userController.Router(e)
+	linkController.Router(e)
 	e.Logger.Fatal(e.Start(":8080"))
 }
