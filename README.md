@@ -4,6 +4,8 @@ GoBio: Link in bio tool built on GoLang, inspired by Linktr.ee
 
 ## Framework
 - Web: Echo
+- Middleware: JWT
+- Configuration : GoDotEnv
 - Database: PostgreSQL
 
 ## Architecture
