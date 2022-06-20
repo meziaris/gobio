@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"gobio/entity"
 	"gobio/model"
 	"gobio/repository"
@@ -9,11 +10,13 @@ import (
 
 type linkServiceImpl struct {
 	LinkRepository repository.LinkRepository
+	UserRepository repository.UserRepository
 }
 
-func NewLinkService(repository *repository.LinkRepository) LinkService {
+func NewLinkService(linkRepository *repository.LinkRepository, userRepository *repository.UserRepository) LinkService {
 	return &linkServiceImpl{
-		LinkRepository: *repository,
+		LinkRepository: *linkRepository,
+		UserRepository: *userRepository,
 	}
 }
 
@@ -38,4 +41,34 @@ func (service *linkServiceImpl) AddLink(linkRequest model.AddLinkRequest, ID int
 	}
 
 	return response, nil
+}
+
+func (service *linkServiceImpl) List(username string) (response []model.ShowAllLinkResponse, err error) {
+	user, err := service.UserRepository.FindByUsername(username)
+
+	if err != nil {
+		return response, err
+	}
+
+	if user.Id == 0 {
+		return response, errors.New("user doesn't exist")
+	}
+
+	links, err := service.LinkRepository.FindAllUserLink(user.Id)
+	if err != nil {
+		return response, err
+	}
+
+	for _, link := range links {
+		response = append(response, model.ShowAllLinkResponse{
+			Id:        link.Id,
+			Title:     link.Title,
+			Url:       link.Url,
+			CreatedAt: link.CreatedAt,
+			UpdatedAt: link.UpdatedAt,
+		})
+	}
+
+	return response, nil
+
 }

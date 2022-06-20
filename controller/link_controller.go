@@ -32,6 +32,7 @@ func (controller *LinkController) Router(e *echo.Echo) {
 		SigningKey:    []byte(os.Getenv("JWT_SECRET_KEY")),
 	}))
 	r.POST("/link", controller.Add)
+	r.GET("/:username", controller.UserLink)
 }
 
 func (controller *LinkController) Add(c echo.Context) error {
@@ -78,4 +79,17 @@ func (controller *LinkController) Add(c echo.Context) error {
 
 	code := http.StatusOK
 	return c.JSON(code, helper.APIResponse("Add link success", code, "OK", response))
+}
+
+func (controller *LinkController) UserLink(c echo.Context) error {
+	username := c.Param("username")
+
+	response, err := controller.LinkService.List(username)
+	if err != nil {
+		code := http.StatusNotFound
+		return c.JSON(code, helper.APIResponse("User not found", code, "FAILED", err.Error()))
+	}
+
+	code := http.StatusOK
+	return c.JSON(code, helper.APIResponse("Get link success", code, "OK", response))
 }

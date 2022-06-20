@@ -27,7 +27,17 @@ func (repository *userRepositoryImpl) Insert(user entity.User) error {
 
 func (repository *userRepositoryImpl) FindByEmail(email string) (entity.User, error) {
 	var user entity.User
-	err := repository.DB.Where("email = ?", email).Find(&user).Error
+	err := repository.DB.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (repository *userRepositoryImpl) FindByUsername(username string) (entity.User, error) {
+	var user entity.User
+	err := repository.DB.Where("username = ?", username).First(&user).Error
 	if err != nil {
 		return user, err
 	}
