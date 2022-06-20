@@ -43,6 +43,49 @@ func (service *linkServiceImpl) AddLink(linkRequest model.AddLinkRequest, ID int
 	return response, nil
 }
 
+func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID int) (response model.UpdateLinkResponse, err error) {
+	var link = entity.Link{}
+	link, err = service.LinkRepository.FindLinkById(ID)
+
+	link.Title = request.Title
+	link.Url = request.Url
+	link.UpdatedAt = time.Now()
+
+	if err != nil {
+		return response, nil
+	}
+
+	newLink, err := service.LinkRepository.Update(link)
+	if err != nil {
+		return response, nil
+	}
+
+	linkResponse := model.UpdateLinkResponse{
+		Id:        newLink.Id,
+		Title:     newLink.Title,
+		Url:       newLink.Url,
+		CreatedAt: newLink.CreatedAt,
+		UpdatedAt: newLink.UpdatedAt,
+	}
+
+	return linkResponse, nil
+
+}
+func (service *linkServiceImpl) DeleteLink(ID int) error {
+	var link = entity.Link{}
+	link, err := service.LinkRepository.FindLinkById(ID)
+	if err != nil {
+		return err
+	}
+
+	err = service.LinkRepository.DeleteLinkById(link)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (service *linkServiceImpl) List(username string) (response []model.ShowAllLinkResponse, err error) {
 	user, err := service.UserRepository.FindByUsername(username)
 

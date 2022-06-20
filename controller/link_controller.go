@@ -5,6 +5,7 @@ import (
 	"gobio/model"
 	"gobio/service"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -23,6 +24,9 @@ func NewLinkController(linkService *service.LinkService) LinkController {
 func (controller *LinkController) Router(e *echo.Echo) {
 	r := e.Group("/v1")
 	r.POST("/link", controller.Add, JWTMiddleware)
+	r.DELETE("/link/:id", controller.Delete, JWTMiddleware)
+	r.PATCH("/link/:id", controller.Update, JWTMiddleware)
+
 	r.GET("/:username", controller.UserLink)
 }
 
@@ -44,6 +48,47 @@ func (controller *LinkController) Add(c echo.Context) error {
 
 	code := http.StatusOK
 	return c.JSON(code, helper.APIResponse("Add link success", code, "OK", response))
+}
+
+func (controller *LinkController) Update(c echo.Context) error {
+	var request = model.UpdateLinkRequest{}
+	linkID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+	}
+
+	err = c.Bind(&request)
+	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+	}
+
+	response, err := controller.LinkService.UpdateLink(request, linkID)
+	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+	}
+
+	code := http.StatusOK
+	return c.JSON(code, helper.APIResponse("Your link has been updated", code, "OK", response))
+}
+
+func (controller *LinkController) Delete(c echo.Context) error {
+	linkID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		code := http.StatusNotFound
+		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
+	}
+
+	err = controller.LinkService.DeleteLink(linkID)
+	if err != nil {
+		code := http.StatusNotFound
+		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
+	}
+
+	code := http.StatusOK
+	return c.JSON(code, helper.APIResponse("Delete link success", code, "OK", linkID))
 }
 
 func (controller *LinkController) UserLink(c echo.Context) error {

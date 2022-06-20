@@ -25,7 +25,26 @@ func (repository *linkRepositoryImpl) Insert(link entity.Link) error {
 	return nil
 }
 
-func (repository *linkRepositoryImpl) Delete(link entity.Link) error {
+func (repository *linkRepositoryImpl) FindLinkById(ID int) (entity.Link, error) {
+	var link entity.Link
+	err := repository.DB.Where("id = ?", ID).First(&link).Error
+	if err != nil {
+		return link, err
+	}
+
+	return link, nil
+}
+
+func (repository *linkRepositoryImpl) Update(link entity.Link) (entity.Link, error) {
+	err := repository.DB.Save(&link).Error
+	if err != nil {
+		return link, err
+	}
+
+	return link, nil
+}
+
+func (repository *linkRepositoryImpl) DeleteLinkById(link entity.Link) error {
 	err := repository.DB.Delete(&link).Error
 	if err != nil {
 		return err
