@@ -8,9 +8,6 @@ GoBio: Link in bio tool built on GoLang, inspired by Linktr.ee
 - Configuration : GoDotEnv
 - Database: PostgreSQL
 
-## Architecture
-Controller -> Service -> Repository
-
 ### Run in Docker
 
 First, install [Docker](https://docs.docker.com/get-docker/) and
