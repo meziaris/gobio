@@ -52,17 +52,17 @@ func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID i
 	link.UpdatedAt = time.Now()
 
 	if err != nil {
-		return response, nil
+		return response, err
 	}
 
 	newUserID := link.UserId
 	if newUserID != userID {
-		return response, errors.New("record not found")
+		return response, err
 	}
 
 	newLink, err := service.LinkRepository.Update(link)
 	if err != nil {
-		return response, nil
+		return response, err
 	}
 
 	linkResponse := model.UpdateLinkResponse{
