@@ -25,6 +25,7 @@ func (controller *UserController) Router(e *echo.Echo) {
 	r := e.Group("/v1")
 	r.POST("/user", controller.Create)
 	r.POST("/login", controller.Login)
+	r.POST("/avatar", controller.UploadAvatar, JWTMiddleware)
 }
 
 func (controller *UserController) Create(c echo.Context) error {
@@ -70,4 +71,24 @@ func (controller *UserController) Login(c echo.Context) error {
 
 	code := http.StatusOK
 	return c.JSON(code, helper.APIResponse("login success", code, "OK", user))
+}
+
+func (controller *UserController) UploadAvatar(c echo.Context) error {
+	userID := c.Get("currentUserID").(int)
+	request := model.UpdateAvatarRequest{}
+
+	err := c.Bind(&request)
+	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
+	}
+
+	response, err := controller.UserService.UploadAvatar(userID, request.AvatarUrl)
+	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
+	}
+
+	code := http.StatusOK
+	return c.JSON(code, helper.APIResponse("upload success", code, "OK", response))
 }

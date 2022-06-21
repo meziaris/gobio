@@ -25,6 +25,16 @@ func (repository *userRepositoryImpl) Insert(user entity.User) error {
 	return nil
 }
 
+func (repository *userRepositoryImpl) FindByID(ID int) (entity.User, error) {
+	var user entity.User
+	err := repository.DB.Where("id = ?", ID).First(&user).Error
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 func (repository *userRepositoryImpl) FindByEmail(email string) (entity.User, error) {
 	var user entity.User
 	err := repository.DB.Where("email = ?", email).First(&user).Error
@@ -38,6 +48,15 @@ func (repository *userRepositoryImpl) FindByEmail(email string) (entity.User, er
 func (repository *userRepositoryImpl) FindByUsername(username string) (entity.User, error) {
 	var user entity.User
 	err := repository.DB.Where("username = ?", username).First(&user).Error
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (repository *userRepositoryImpl) UpdateAvatar(user entity.User) (entity.User, error) {
+	err := repository.DB.Save(&user).Error
 	if err != nil {
 		return user, err
 	}

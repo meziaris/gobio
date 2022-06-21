@@ -76,3 +76,28 @@ func (service *userServiceImpl) Login(request model.LoginUserRequest, token stri
 	return userResponse, nil
 
 }
+
+func (service *userServiceImpl) UploadAvatar(userID int, avatarURL string) (response model.UpdateAvatarResponse, err error) {
+	var user = entity.User{}
+	user, err = service.UserRepository.FindByID(userID)
+	if err != nil {
+		return response, err
+	}
+
+	user.AvatarUrl = avatarURL
+
+	newUser, err := service.UserRepository.UpdateAvatar(user)
+	if err != nil {
+		return response, err
+	}
+
+	response = model.UpdateAvatarResponse{
+		ID:        newUser.Id,
+		Name:      newUser.Name,
+		Username:  newUser.Username,
+		Email:     newUser.Email,
+		AvatarUrl: newUser.AvatarUrl,
+	}
+
+	return response, nil
+}
