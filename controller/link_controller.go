@@ -100,7 +100,7 @@ func (controller *LinkController) Delete(c echo.Context) error {
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("Delete link success", code, "OK", linkID))
+	return c.JSON(code, helper.APIResponse("Delete link success", code, "OK", "Link has been deleted"))
 }
 
 func (controller *LinkController) UserLink(c echo.Context) error {
