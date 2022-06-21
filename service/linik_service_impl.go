@@ -57,7 +57,7 @@ func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID i
 
 	newUserID := link.UserId
 	if newUserID != userID {
-		return response, errors.New("action not allowed")
+		return response, errors.New("record not found")
 	}
 
 	newLink, err := service.LinkRepository.Update(link)
@@ -86,7 +86,7 @@ func (service *linkServiceImpl) DeleteLink(ID int, userID int) error {
 
 	newUserID := link.UserId
 	if newUserID != userID {
-		return errors.New("action not allowed")
+		return errors.New("record not found")
 	}
 
 	err = service.LinkRepository.DeleteLinkById(link)

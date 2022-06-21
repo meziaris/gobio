@@ -79,13 +79,13 @@ func (controller *LinkController) Delete(c echo.Context) error {
 	userID := c.Get("currentUserID").(int)
 	linkID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		code := http.StatusNotFound
+		code := http.StatusUnprocessableEntity
 		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
 	}
 
 	err = controller.LinkService.DeleteLink(linkID, userID)
 	if err != nil {
-		code := http.StatusNotFound
+		code := http.StatusUnprocessableEntity
 		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
 	}
 
