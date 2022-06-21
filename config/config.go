@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -23,10 +22,6 @@ func (config *configImpl) Get(key string, fallback string) string {
 }
 
 func New(filenames ...string) Config {
-	err := godotenv.Load(filenames...)
-	if err != nil {
-		log.Fatal("Error on loading .env file")
-	}
-
+	godotenv.Load(filenames...)
 	return &configImpl{}
 }
