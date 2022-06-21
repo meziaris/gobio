@@ -37,6 +37,11 @@ func (controller *UserController) Create(c echo.Context) error {
 		return c.JSON(code, helper.APIResponse("Account register failed", code, "FAILED", err.Error()))
 	}
 
+	if err := c.Validate(request); err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("Account register failed", code, "FAILED", err.Error()))
+	}
+
 	response, err := controller.UserService.Register(request)
 	if err != nil {
 		code := http.StatusBadRequest
@@ -52,6 +57,11 @@ func (controller *UserController) Login(c echo.Context) error {
 
 	err := c.Bind(&request)
 	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+	}
+
+	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
 		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
@@ -79,6 +89,11 @@ func (controller *UserController) UploadAvatar(c echo.Context) error {
 
 	err := c.Bind(&request)
 	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
+	}
+
+	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
 		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
 	}

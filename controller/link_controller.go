@@ -40,6 +40,11 @@ func (controller *LinkController) Add(c echo.Context) error {
 		return c.JSON(code, helper.APIResponse("Add link failed", code, "FAILED", err.Error()))
 	}
 
+	if err := c.Validate(request); err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("Add link failed", code, "FAILED", err.Error()))
+	}
+
 	response, err := controller.LinkService.AddLink(request, userID)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
@@ -61,6 +66,11 @@ func (controller *LinkController) Update(c echo.Context) error {
 
 	err = c.Bind(&request)
 	if err != nil {
+		code := http.StatusUnprocessableEntity
+		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+	}
+
+	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
 		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
 	}

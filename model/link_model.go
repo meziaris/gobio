@@ -3,8 +3,8 @@ package model
 import "time"
 
 type AddLinkRequest struct {
-	Title  string `json:"title"`
-	Url    string `json:"url"`
+	Title  string `json:"title" validate:"required"`
+	Url    string `json:"url" validate:"required"`
 	UserId int    `json:"user_id"`
 }
 
@@ -23,8 +23,8 @@ type ShowAllLinkResponse struct {
 }
 
 type UpdateLinkRequest struct {
-	Title string `json:"title"`
-	Url   string `json:"url"`
+	Title string `json:"title" validate:"required"`
+	Url   string `json:"url" validate:"required"`
 }
 
 type UpdateLinkResponse struct {
