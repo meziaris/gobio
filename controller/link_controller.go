@@ -51,6 +51,7 @@ func (controller *LinkController) Add(c echo.Context) error {
 }
 
 func (controller *LinkController) Update(c echo.Context) error {
+	userID := c.Get("currentUserID").(int)
 	var request = model.UpdateLinkRequest{}
 	linkID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -64,7 +65,7 @@ func (controller *LinkController) Update(c echo.Context) error {
 		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
 	}
 
-	response, err := controller.LinkService.UpdateLink(request, linkID)
+	response, err := controller.LinkService.UpdateLink(request, linkID, userID)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
 		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
@@ -75,13 +76,14 @@ func (controller *LinkController) Update(c echo.Context) error {
 }
 
 func (controller *LinkController) Delete(c echo.Context) error {
+	userID := c.Get("currentUserID").(int)
 	linkID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		code := http.StatusNotFound
 		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
 	}
 
-	err = controller.LinkService.DeleteLink(linkID)
+	err = controller.LinkService.DeleteLink(linkID, userID)
 	if err != nil {
 		code := http.StatusNotFound
 		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))

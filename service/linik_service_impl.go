@@ -43,7 +43,7 @@ func (service *linkServiceImpl) AddLink(linkRequest model.AddLinkRequest, ID int
 	return response, nil
 }
 
-func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID int) (response model.UpdateLinkResponse, err error) {
+func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID int, userID int) (response model.UpdateLinkResponse, err error) {
 	var link = entity.Link{}
 	link, err = service.LinkRepository.FindLinkById(ID)
 
@@ -53,6 +53,11 @@ func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID i
 
 	if err != nil {
 		return response, nil
+	}
+
+	newUserID := link.UserId
+	if newUserID != userID {
+		return response, errors.New("action not allowed")
 	}
 
 	newLink, err := service.LinkRepository.Update(link)
@@ -71,11 +76,17 @@ func (service *linkServiceImpl) UpdateLink(request model.UpdateLinkRequest, ID i
 	return linkResponse, nil
 
 }
-func (service *linkServiceImpl) DeleteLink(ID int) error {
+
+func (service *linkServiceImpl) DeleteLink(ID int, userID int) error {
 	var link = entity.Link{}
 	link, err := service.LinkRepository.FindLinkById(ID)
 	if err != nil {
 		return err
+	}
+
+	newUserID := link.UserId
+	if newUserID != userID {
+		return errors.New("action not allowed")
 	}
 
 	err = service.LinkRepository.DeleteLinkById(link)
