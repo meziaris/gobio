@@ -60,3 +60,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of database secret.
+*/}}
+{{- define "gobio.dbSecretName" -}}
+{{- printf "%s-%s" (include "gobio.fullname" .) "db" | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Create the name of JWT secret.
+*/}}
+{{- define "gobio.jwtSecretName" -}}
+{{- printf "%s-%s" (include "gobio.fullname" .) "jwt" | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}

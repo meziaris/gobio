@@ -14,6 +14,16 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+config:
+  db:
+    host: ""
+    user: ""
+    password: ""
+    name: ""
+    port: ""
+  jwt:
+    secretKey: ""
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
