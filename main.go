@@ -22,7 +22,7 @@ func main() {
 
 	// Setup Service
 	userService := service.NewUserService(&userRepository)
-	jwtService := service.NewJWTToken()
+	jwtService := service.NewJWTToken(&configuration)
 	linkService := service.NewLinkService(&linkRepository, &userRepository)
 
 	// Setup Controller
