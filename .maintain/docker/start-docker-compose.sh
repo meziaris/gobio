@@ -9,6 +9,8 @@ PROJECT_ROOT=`git rev-parse --show-toplevel`
 cd $PROJECT_ROOT
 
 echo "Starting docker compose"
-docker-compose -p gobio -f .maintain/docker/docker-compose.yml up -d
+docker-compose -p gobio -f .maintain/docker/docker-compose.yml up -d postgres
+sleep 5s
+docker-compose -p gobio -f .maintain/docker/docker-compose.yml up -d gobio
 
 popd
