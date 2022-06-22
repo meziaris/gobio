@@ -1,0 +1,116 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: main
+
+jobs:
+  compute-build-info:
+    runs-on: ubuntu-20.04
+    outputs:
+      sha_short: ${{ steps.build-info.outputs.sha_short }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Compute build info
+        id: build-info
+        shell: bash
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          echo "::set-output name=sha_short::$SHA_SHORT"
+
+  build:
+    runs-on: ubuntu-20.04
+    needs:
+      - compute-build-info
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-main
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          file: .maintain/docker/Dockerfile
+          tags: |
+            ${{ github.repository }}:${{ needs.compute-build-info.outputs.sha_short }}
+            ${{ github.repository }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      # Temp fix
+      # https://github.com/docker/build-push-action/issues/252
+      # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: [compute-build-info, build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            ./connect.sh
+            helm repo add gobio https://charts.mezi.dev
+            helm repo update
+            helm upgrade gobio gobio/gobio --namespace gobio \
+              --install \
+              --set-string image.tag=${{ needs.compute-build-info.outputs.sha_short }} \
+              --set-string config.db.host=${{ secrets.DB_HOST }} \
+              --set-string config.db.user=${{ secrets.DB_USER }} \
+              --set-string config.db.password=${{ secrets.DB_PASSWORD }} \
+              --set-string config.db.name=${{ secrets.DB_NAME }} \
+              --set-string config.db.port=${{ secrets.DB_PORT }} \
+              --set-string config.jwt.secretKey=${{ secrets.JWT_SECRET_KEY }} \
+              --set ingress.enabled=true \
+              --set-string ingress.className=nginx \
+              --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
+              --set-string ingress.hosts[0].host=${{ secrets.API_DNS }} \
+              --set-string ingress.hosts[0].paths[0].path=/ \
+              --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
+              --set-string ingress.tls[0].secretName=gobio-tls \
+              --set-string ingress.tls[0].hosts[0]=${{ secrets.API_DNS }} \
+              --set-string resources.requests.cpu=100m \
+              --set-string resources.requests.memory=128Mi \
+              --set-string resources.limits.cpu=100m \
+              --set-string resources.limits.memory=128Mi \
+              --set replicaCount=1 \
+              --set autoscaling.enabled=true \
+              --set autoscaling.minReplicas=1 \
+              --set autoscaling.maxReplicas=3 \
+              --set-string nodeSelector.pool=general
+            kubectl rollout status deployment/gobio -n gobio
