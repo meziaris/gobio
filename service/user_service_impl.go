@@ -48,7 +48,7 @@ func (service *userServiceImpl) Register(request model.RegisterUserRequest) (res
 	return userResponse, nil
 }
 
-func (service *userServiceImpl) Login(request model.LoginUserRequest, token string) (response model.LoginUserResponse, err error) {
+func (service *userServiceImpl) Login(request model.LoginUserRequest) (response model.LoginUserResponse, err error) {
 	email := request.Email
 	password := request.Password
 
