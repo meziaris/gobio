@@ -23,6 +23,10 @@ config:
     port: ""
   jwt:
     secretKey: ""
+  livenessProbe:
+    path: ""
+  readinessProbe:
+    path: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
