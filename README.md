@@ -33,6 +33,6 @@ First, install [Docker](https://docs.docker.com/get-docker/) and
 
 Then run the following command.
 ```bash
-./.maintain/docker/create-image.sh
-./.maintain/docker/start-docker-compose.sh
+./deployment/docker/create-image.sh
+./deployment/docker/start-docker-compose.sh
 ```
