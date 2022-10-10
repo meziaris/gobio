@@ -15,8 +15,8 @@ type LinkController struct {
 	JWTService  service.JWTService
 }
 
-func NewLinkController(linkService *service.LinkService) LinkController {
-	return LinkController{
+func NewLinkController(linkService *service.LinkService) *LinkController {
+	return &LinkController{
 		LinkService: *linkService,
 	}
 }

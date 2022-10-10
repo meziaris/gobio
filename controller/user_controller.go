@@ -14,8 +14,8 @@ type UserController struct {
 	JWTService  service.JWTService
 }
 
-func NewUserController(userService *service.UserService, jwtService *service.JWTService) UserController {
-	return UserController{
+func NewUserController(userService *service.UserService, jwtService *service.JWTService) *UserController {
+	return &UserController{
 		UserService: *userService,
 		JWTService:  *jwtService,
 	}
