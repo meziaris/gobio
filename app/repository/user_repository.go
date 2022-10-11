@@ -1,6 +1,6 @@
 package repository
 
-import "gobio/entity"
+import "gobio/app/entity"
 
 type UserRepository interface {
 	Insert(user entity.User) error

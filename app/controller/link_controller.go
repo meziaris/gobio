@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"gobio/helper"
-	"gobio/model"
-	"gobio/service"
+	"gobio/app/model"
+	rsp "gobio/app/response"
+	"gobio/app/service"
 	"net/http"
 	"strconv"
 
@@ -37,22 +37,22 @@ func (controller *LinkController) Add(c echo.Context) error {
 	err := c.Bind(&request)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Add link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Add link failed", code, "FAILED", err.Error()))
 	}
 
 	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Add link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Add link failed", code, "FAILED", err.Error()))
 	}
 
 	response, err := controller.LinkService.AddLink(request, userID)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Add link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Add link failed", code, "FAILED", err.Error()))
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("Add link success", code, "OK", response))
+	return c.JSON(code, rsp.APIResponse("Add link success", code, "OK", response))
 }
 
 func (controller *LinkController) Update(c echo.Context) error {
@@ -61,28 +61,28 @@ func (controller *LinkController) Update(c echo.Context) error {
 	linkID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Update link failed", code, "FAILED", err.Error()))
 	}
 
 	err = c.Bind(&request)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Update link failed", code, "FAILED", err.Error()))
 	}
 
 	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Update link failed", code, "FAILED", err.Error()))
 	}
 
 	response, err := controller.LinkService.UpdateLink(request, linkID, userID)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Update link failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Update link failed", code, "FAILED", err.Error()))
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("Your link has been updated", code, "OK", response))
+	return c.JSON(code, rsp.APIResponse("Your link has been updated", code, "OK", response))
 }
 
 func (controller *LinkController) Delete(c echo.Context) error {
@@ -90,17 +90,17 @@ func (controller *LinkController) Delete(c echo.Context) error {
 	linkID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Link not found", code, "FAILED", err.Error()))
 	}
 
 	err = controller.LinkService.DeleteLink(linkID, userID)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Link not found", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Link not found", code, "FAILED", err.Error()))
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("Delete link success", code, "OK", "Link has been deleted"))
+	return c.JSON(code, rsp.APIResponse("Delete link success", code, "OK", "Link has been deleted"))
 }
 
 func (controller *LinkController) UserLink(c echo.Context) error {
@@ -109,9 +109,9 @@ func (controller *LinkController) UserLink(c echo.Context) error {
 	response, err := controller.LinkService.List(username)
 	if err != nil {
 		code := http.StatusNotFound
-		return c.JSON(code, helper.APIResponse("User not found", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("User not found", code, "FAILED", err.Error()))
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("Get link success", code, "OK", response))
+	return c.JSON(code, rsp.APIResponse("Get link success", code, "OK", response))
 }

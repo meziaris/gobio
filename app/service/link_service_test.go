@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"gobio/entity"
-	"gobio/model"
-	"gobio/repository/mocks"
+	"gobio/app/entity"
+	"gobio/app/model"
+	"gobio/app/repository/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

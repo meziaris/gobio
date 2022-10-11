@@ -2,7 +2,7 @@ package controller
 
 import (
 	"errors"
-	"gobio/helper"
+	rsp "gobio/app/response"
 	"net/http"
 	"os"
 	"strings"
@@ -18,7 +18,7 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		tokenHeader := strings.Split(header, " ")
 		if len(tokenHeader) < 2 {
 			code := http.StatusUnauthorized
-			return c.JSON(code, helper.APIResponse("Unauthorization", code, "FAILED", errors.New("you are not allowed to access this page")))
+			return c.JSON(code, rsp.APIResponse("Unauthorization", code, "FAILED", errors.New("you are not allowed to access this page")))
 		}
 		tokenString := tokenHeader[1]
 
@@ -33,13 +33,13 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		if err != nil {
 			code := http.StatusUnauthorized
-			return c.JSON(code, helper.APIResponse("Unauthorization", code, "FAILED", errors.New("you are not allowed to access this page")))
+			return c.JSON(code, rsp.APIResponse("Unauthorization", code, "FAILED", errors.New("you are not allowed to access this page")))
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
 			code := http.StatusUnauthorized
-			return c.JSON(code, helper.APIResponse("Unauthorization", code, "FAILED", errors.New("you are not allowed to access this page")))
+			return c.JSON(code, rsp.APIResponse("Unauthorization", code, "FAILED", errors.New("you are not allowed to access this page")))
 		}
 
 		userID := int(claims["user_id"].(float64))

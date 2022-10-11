@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"gobio/helper"
-	"gobio/model"
-	"gobio/service"
+	"gobio/app/model"
+	rsp "gobio/app/response"
+	"gobio/app/service"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -34,22 +34,22 @@ func (controller *UserController) Create(c echo.Context) error {
 	err := c.Bind(&request)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Account register failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Account register failed", code, "FAILED", err.Error()))
 	}
 
 	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("Account register failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Account register failed", code, "FAILED", err.Error()))
 	}
 
 	response, err := controller.UserService.Register(request)
 	if err != nil {
 		code := http.StatusBadRequest
-		return c.JSON(code, helper.APIResponse("Account register failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("Account register failed", code, "FAILED", err.Error()))
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("Your account has been created", code, "OK", response))
+	return c.JSON(code, rsp.APIResponse("Your account has been created", code, "OK", response))
 }
 
 func (controller *UserController) Login(c echo.Context) error {
@@ -58,29 +58,29 @@ func (controller *UserController) Login(c echo.Context) error {
 	err := c.Bind(&request)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
 
 	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
 
 	user, err := controller.UserService.Login(request)
 	if err != nil {
 		code := http.StatusBadRequest
-		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
 
 	token, err := controller.JWTService.GenerateToken(user.ID)
 	if err != nil {
 		code := http.StatusBadRequest
-		return c.JSON(code, helper.APIResponse("login failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
 	user.Token = token
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("login success", code, "OK", user))
+	return c.JSON(code, rsp.APIResponse("login success", code, "OK", user))
 }
 
 func (controller *UserController) UploadAvatar(c echo.Context) error {
@@ -90,20 +90,20 @@ func (controller *UserController) UploadAvatar(c echo.Context) error {
 	err := c.Bind(&request)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("upload failed", code, "FAILED", err.Error()))
 	}
 
 	if err := c.Validate(request); err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("upload failed", code, "FAILED", err.Error()))
 	}
 
 	response, err := controller.UserService.UploadAvatar(userID, request.AvatarUrl)
 	if err != nil {
 		code := http.StatusUnprocessableEntity
-		return c.JSON(code, helper.APIResponse("upload failed", code, "FAILED", err.Error()))
+		return c.JSON(code, rsp.APIResponse("upload failed", code, "FAILED", err.Error()))
 	}
 
 	code := http.StatusOK
-	return c.JSON(code, helper.APIResponse("upload success", code, "OK", response))
+	return c.JSON(code, rsp.APIResponse("upload success", code, "OK", response))
 }

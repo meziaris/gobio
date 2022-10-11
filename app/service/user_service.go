@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"gobio/entity"
-	"gobio/model"
-	"gobio/repository"
+	"gobio/app/entity"
+	"gobio/app/model"
+	"gobio/app/repository"
 
 	"golang.org/x/crypto/bcrypt"
 )

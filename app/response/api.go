@@ -1,6 +1,6 @@
 package helper
 
-import "gobio/model"
+import "gobio/app/model"
 
 func APIResponse(message string, code int, status string, data interface{}) model.ApiResponse {
 	meta := model.MetaResponse{
