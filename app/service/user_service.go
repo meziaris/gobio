@@ -2,21 +2,27 @@ package service
 
 import (
 	"errors"
-	"gobio/entity"
-	"gobio/model"
-	"gobio/repository"
+	"gobio/app/entity"
+	"gobio/app/model"
+	"gobio/app/repository"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+type UserService interface {
+	Register(request model.RegisterUserRequest) (model.RegisterUserResponse, error)
+	Login(request model.LoginUserRequest) (model.LoginUserResponse, error)
+	UploadAvatar(userID int, avatarURL string) (model.UpdateAvatarResponse, error)
+}
+
+type userServiceImpl struct {
+	UserRepository repository.UserRepository
+}
 
 func NewUserService(repository *repository.UserRepository) UserService {
 	return &userServiceImpl{
 		UserRepository: *repository,
 	}
-}
-
-type userServiceImpl struct {
-	UserRepository repository.UserRepository
 }
 
 func (service *userServiceImpl) Register(request model.RegisterUserRequest) (response model.RegisterUserResponse, err error) {

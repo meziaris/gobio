@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"gobio/entity"
+	"gobio/app/entity"
 
 	"gorm.io/gorm"
 )

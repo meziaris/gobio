@@ -1,10 +1,10 @@
 package main
 
 import (
+	"gobio/app/controller"
+	"gobio/app/repository"
+	"gobio/app/service"
 	"gobio/config"
-	"gobio/controller"
-	"gobio/repository"
-	"gobio/service"
 	"gobio/validation"
 
 	"github.com/go-playground/validator/v10"
