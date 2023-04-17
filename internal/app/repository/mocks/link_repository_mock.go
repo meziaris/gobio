@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	entity "gobio/app/entity"
+	entity "gobio/internal/app/entity"
 
 	mock "github.com/stretchr/testify/mock"
 )

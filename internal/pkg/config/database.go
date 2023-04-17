@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"gobio/app/entity"
+	"gobio/internal/app/entity"
 	"log"
 
 	"gorm.io/driver/postgres"

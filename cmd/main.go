@@ -1,11 +1,11 @@
 package main
 
 import (
-	"gobio/app/controller"
-	"gobio/app/repository"
-	"gobio/app/service"
-	"gobio/config"
-	"gobio/validation"
+	"gobio/internal/app/controller"
+	"gobio/internal/app/repository"
+	"gobio/internal/app/service"
+	"gobio/internal/pkg/config"
+	"gobio/internal/pkg/validation"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -22,11 +22,10 @@ func main() {
 
 	// Setup Service
 	userService := service.NewUserService(&userRepository)
-	jwtService := service.NewJWTToken(&configuration)
 	linkService := service.NewLinkService(&linkRepository, &userRepository)
 
 	// Setup Controller
-	userController := controller.NewUserController(&userService, &jwtService)
+	userController := controller.NewUserController(&userService)
 	linkController := controller.NewLinkController(&linkService)
 
 	// Setup Echo
