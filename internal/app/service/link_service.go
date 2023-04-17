@@ -2,9 +2,9 @@ package service
 
 import (
 	"errors"
-	"gobio/app/entity"
-	"gobio/app/model"
-	"gobio/app/repository"
+	"gobio/internal/app/entity"
+	"gobio/internal/app/model"
+	"gobio/internal/app/repository"
 	"time"
 )
 

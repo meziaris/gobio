@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"gobio/app/model"
-	rsp "gobio/app/response"
-	"gobio/app/service"
+	"gobio/internal/app/model"
+	rsp "gobio/internal/app/response"
+	"gobio/internal/app/service"
 	"net/http"
 	"strconv"
 
@@ -12,7 +12,6 @@ import (
 
 type LinkController struct {
 	LinkService service.LinkService
-	JWTService  service.JWTService
 }
 
 func NewLinkController(linkService *service.LinkService) *LinkController {

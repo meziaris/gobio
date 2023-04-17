@@ -1,9 +1,10 @@
 package controller
 
 import (
-	"gobio/app/model"
-	rsp "gobio/app/response"
-	"gobio/app/service"
+	"gobio/internal/app/model"
+	rsp "gobio/internal/app/response"
+	"gobio/internal/app/service"
+	"gobio/internal/pkg/token"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -11,14 +12,10 @@ import (
 
 type UserController struct {
 	UserService service.UserService
-	JWTService  service.JWTService
 }
 
-func NewUserController(userService *service.UserService, jwtService *service.JWTService) *UserController {
-	return &UserController{
-		UserService: *userService,
-		JWTService:  *jwtService,
-	}
+func NewUserController(userService *service.UserService) *UserController {
+	return &UserController{UserService: *userService}
 }
 
 func (controller *UserController) Router(e *echo.Echo) {
@@ -72,7 +69,7 @@ func (controller *UserController) Login(c echo.Context) error {
 		return c.JSON(code, rsp.APIResponse("login failed", code, "FAILED", err.Error()))
 	}
 
-	token, err := controller.JWTService.GenerateToken(user.ID)
+	token, err := token.GenerateAccessToken(user.ID)
 	if err != nil {
 		code := http.StatusBadRequest
 		return c.JSON(code, rsp.APIResponse("login failed", code, "FAILED", err.Error()))

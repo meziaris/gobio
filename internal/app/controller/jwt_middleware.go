@@ -2,7 +2,8 @@ package controller
 
 import (
 	"errors"
-	rsp "gobio/app/response"
+	rsp "gobio/internal/app/response"
+
 	"net/http"
 	"os"
 	"strings"

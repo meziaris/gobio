@@ -1,6 +1,6 @@
 package repository
 
-import "gobio/app/entity"
+import "gobio/internal/app/entity"
 
 type LinkRepository interface {
 	Insert(link entity.Link) error
